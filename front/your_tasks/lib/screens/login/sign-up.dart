@@ -20,7 +20,7 @@ class _SignUpState extends State<SignUp> {
     return BlocListener<RegisterBloc, RegisterState>(
       listener: (context, state) {
         if (state is ErrorRegistered) Scaffold.of(context).showSnackBar(snackBarError);
-        if (state is Register) Scaffold.of(context).showSnackBar(snackBarSuccess);
+        if (state is Registered) Scaffold.of(context).showSnackBar(snackBarSuccess);
       },
       child: Column(
         children: <Widget>[

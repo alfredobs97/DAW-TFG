@@ -9,8 +9,10 @@ class LogginIn extends LoginState{}
 
 class Logged extends LoginState{
   final String token;
+  final String username;
 
-  Logged(this.token);
+  Logged(this.token, this.username);
+
 }
 
 class InvalidLogin extends LoginState{}

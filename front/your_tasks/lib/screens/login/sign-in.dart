@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:your_tasks/bloc/login_bloc/login_bloc.dart';
+import 'package:your_tasks/providers/token-provider.dart';
 
 class SignIn extends StatefulWidget {
   @override
@@ -17,6 +18,7 @@ class _SignInState extends State<SignIn> {
           if (state is InvalidLogin) {
             final snackBar = SnackBar(content: Text('Usuario o contraseña incorrectos'));
 
+            Scaffold.of(context).hideCurrentSnackBar();
             Scaffold.of(context).showSnackBar(snackBar);
           }
           if (state is LogginIn) {
@@ -26,9 +28,15 @@ class _SignInState extends State<SignIn> {
               children: [CircularProgressIndicator(), Text('Iniciando sesión...')],
             ));
 
+            Scaffold.of(context).hideCurrentSnackBar();
             Scaffold.of(context).showSnackBar(snackBar);
           }
-          if (state is Logged) Navigator.pushNamed(context, '/home');
+          if (state is Logged) {
+            TokenProvicer.saveToken(state.token);
+            Scaffold.of(context).hideCurrentSnackBar();
+            Navigator.pushNamed(context, '/home');
+          }
+          ;
         },
         child: Column(
           children: <Widget>[

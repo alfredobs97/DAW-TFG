@@ -24,7 +24,7 @@ class LoginBloc extends Bloc<LoginEvent, LoginState> {
     yield LogginIn();
     try {
       final token = await _loginRepository.login(username, password);
-      yield Logged(token);
+      yield Logged(token, username);
     } catch (e) {
       yield InvalidLogin();
     }
