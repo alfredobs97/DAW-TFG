@@ -16,7 +16,7 @@ class _SignInState extends State<SignIn> {
   @override
   Widget build(BuildContext context) {
     return BlocListener<LoginBloc, LoginState>(
-        listener: (context, state) {
+        listener: (context, state) async{
           if (state is InvalidLogin) {
             Scaffold.of(context).hideCurrentSnackBar();
             Scaffold.of(context).showSnackBar(SnackBars.errorLogin);
@@ -26,7 +26,7 @@ class _SignInState extends State<SignIn> {
             Scaffold.of(context).showSnackBar(SnackBars.loginIn);
           }
           if (state is Logged) {
-            TokenProvider.saveToken(state.token);
+            await TokenProvider.saveToken(state.token);
             Scaffold.of(context).hideCurrentSnackBar();
             context.bloc<TaskBloc>().add(FetchTask(state.username));
             Navigator.pushNamed(context, '/home');

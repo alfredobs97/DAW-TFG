@@ -1,14 +1,44 @@
+import 'package:flutter/foundation.dart';
+import 'package:sembast/sembast.dart';
+import 'package:sembast/sembast_io.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 class TokenProvider {
-  static saveToken(String token) async{
+  static final String dbPath = 'token.db';
+  static final DatabaseFactory dbFactory = databaseFactoryIo;
+
+  static saveToken(String token) {
+    kIsWeb ? __saveTokenWeb(token) : __saveTokenMobilDesktop(token);
+  }
+
+  static loadToken() {
+    return kIsWeb ? __loadTokenWeb() : __loadTokenMobilDesktop();
+  }
+
+  static __saveTokenMobilDesktop(String token) async {
+    Database db = await dbFactory.openDatabase(dbPath);
+    var store = StoreRef.main();
+
+    await store.record('token').put(db, token);
+  }
+
+  static __saveTokenWeb(String token) async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
+
     await prefs.setString('token', token);
   }
 
-  static Future<String> loadToken() async{
+  static __loadTokenMobilDesktop() async {
+    Database db = await dbFactory.openDatabase(dbPath);
+    var store = StoreRef.main();
+
+    return await store.record('token').get(db) as String;
+  }
+
+  static __loadTokenWeb() async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
     
+    print(prefs.getString('token'));
     return prefs.getString('token');
   }
 }
