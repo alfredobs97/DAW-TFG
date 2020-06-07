@@ -31,7 +31,6 @@ class _SignInState extends State<SignIn> {
             context.bloc<TaskBloc>().add(FetchTask(state.username));
             Navigator.pushNamed(context, '/home');
           }
-          ;
         },
         child: Column(
           children: <Widget>[
