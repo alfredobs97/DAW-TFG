@@ -24,7 +24,6 @@ class _NewTaskState extends State<NewTask> {
           if (state is TaskCreated) _scaffoldKey.currentState.showSnackBar(SnackBars.taskSend);
           if (state is TaskModified) {
             _scaffoldKey.currentState.showSnackBar(SnackBars.modifiedTask);
-            await Future.delayed(Duration(seconds: 1));
           }
         },
         child: Scaffold(
