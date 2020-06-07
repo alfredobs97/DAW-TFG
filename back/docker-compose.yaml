@@ -11,3 +11,22 @@ services:
     environment:
       MYSQL_ROOT_PASSWORD: toor
       MYSQL_DATABASE: LOGIN
+  
+  main:
+    build: main/.
+    links: 
+      - db
+    restart: always
+    ports: 
+      - 3000:3000
+    env_file:
+      - .env
+    command: ["./wait-for-it.sh", "db:3306", "-t", "50", "--", "npm", "run", "start:prod"]
+
+  password:
+    build: password/.
+    restart: always
+    ports: 
+      - 3001:3001
+
+
