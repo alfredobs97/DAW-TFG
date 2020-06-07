@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
-import 'package:provider/provider.dart';
-import 'package:your_tasks/providers/user-provider.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:your_tasks/bloc/user_bloc/user_bloc.dart';
+import 'package:your_tasks/models/user-model.dart';
 
 class AddUserTask extends StatefulWidget {
   @override
@@ -8,47 +9,18 @@ class AddUserTask extends StatefulWidget {
 }
 
 class _AddUserTaskState extends State<AddUserTask> {
-  bool isSearching = false;
-  @override
-  void didChangeDependencies() {
-    super.didChangeDependencies();
-    Provider.of<UserProvider>(context).fetchUsers().then((value) {
-      setState(() {});
-    });
-  }
+  List<User> _userSelected = [];
 
-  _listViewSearching(UserProvider userProvider) {
+  _listViewFetch(List<User> users) {
     return ListView.builder(
-      itemCount: userProvider.copyUsersSearch.length,
+      itemCount: users.length,
       itemBuilder: (BuildContext context, int index) {
         return CheckboxListTile(
-          title: Text(userProvider.copyUsersSearch[index].username),
-          value: userProvider.copyUsersSearch[index].isSelected,
-          onChanged: (bool newValue) {
-            userProvider.copyUsersSearch[index].isSelected = newValue;
-
-            // todo rethink this
-            userProvider.users
-                .firstWhere((user) =>
-                    userProvider.copyUsersSearch[index].username ==
-                    user.username)
-                .isSelected = newValue;
-            setState(() {});
-          },
-        );
-      },
-    );
-  }
-
-  _listViewFetch(userProvider) {
-    return ListView.builder(
-      itemCount: userProvider.users.length,
-      itemBuilder: (BuildContext context, int index) {
-        return CheckboxListTile(
-          title: Text(userProvider.users[index].username),
-          value: userProvider.users[index].isSelected,
-          onChanged: (bool newValue) {
-            userProvider.users[index].isSelected = newValue;
+          title: Text(users[index].username),
+          value: _userSelected.any((User user) => users[index].username == user.username),
+          onChanged: (bool isSelected) {
+            users[index].isSelected = isSelected;
+            if(isSelected) _userSelected.add(users[index]);
             setState(() {});
           },
         );
@@ -58,7 +30,6 @@ class _AddUserTaskState extends State<AddUserTask> {
 
   @override
   Widget build(BuildContext context) {
-    UserProvider userProvider = Provider.of<UserProvider>(context);
     return Scaffold(
       appBar: AppBar(
         title: Text('Busca los usuarios'),
@@ -66,27 +37,29 @@ class _AddUserTaskState extends State<AddUserTask> {
       body: Column(
         children: <Widget>[
           TextField(
-            onChanged: (String value) {
-              isSearching = value.length > 0;
+            onChanged: (String username) {
+              if (username.length == 0) context.bloc<UserBloc>().add(FetchUsers());
 
-              if (value.length == 0) userProvider.copyOfUsersToSearch();
-
-              if (isSearching) userProvider.filterUsers(value);
-
-              setState(() {});
+              if (username.length > 1) context.bloc<UserBloc>().add(FilterUsers(username));
             },
             decoration: InputDecoration(
                 icon: Icon(Icons.search), hintText: 'Nombre de usuario'),
           ),
           Expanded(
-              child: isSearching
-                  ? _listViewSearching(userProvider)
-                  : _listViewFetch(userProvider))
+              child: BlocBuilder<UserBloc, UserState>(
+                builder: (context, state) {
+                  if(state is UsersLoaded) return _listViewFetch(state.users);
+                  if(state is FetchingUsers) return Center(child: CircularProgressIndicator());
+                  if(state is ErrorFetchingUsers) return Center(child: Text('Error en el servidor'));
+                  return Center(child: CircularProgressIndicator());
+                },
+              ))
         ],
       ),
       floatingActionButton: FloatingActionButton(
         onPressed: () {
-          Navigator.pop(context, userProvider.usersSelected());
+          context.bloc<UserBloc>().add(UsersSelected(_userSelected));
+          Navigator.pop(context);
         },
         child: Icon(Icons.done),
       ),

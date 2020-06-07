@@ -1,10 +1,12 @@
 import 'package:flutter/material.dart';
+import 'package:your_tasks/bloc/task_bloc/task_bloc.dart';
 import 'package:your_tasks/models/task-model.dart';
+import 'package:your_tasks/screens/main/new-task.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 
 class CardTask extends StatelessWidget {
   final Task task;
-  final Function checkTaskIsDone;
-  CardTask({this.task, this.checkTaskIsDone});
+  CardTask({this.task});
 
   _generateGradient(String priority) {
     Map<String, LinearGradient> gradients = {
@@ -28,12 +30,12 @@ class CardTask extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return GestureDetector(
-          onLongPress: () => Navigator.pushNamed(context, '/newTask', arguments: task),
+          onLongPress: () => Navigator.of(context).push(MaterialPageRoute(builder: (_) => NewTask(taskEditing: task))),
           child: Dismissible(
             background: Container(color: Colors.red),
             key: Key(task.id.toString()),
-            onDismissed: (DismissDirection direction  ) {
-              this.checkTaskIsDone(task);
+            onDismissed: (DismissDirection direction) {
+              context.bloc<TaskBloc>().add(DoneTask(task.id.toString()));
             },
             child: Card(
           shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),

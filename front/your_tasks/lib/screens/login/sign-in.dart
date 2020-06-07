@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:your_tasks/bloc/login_bloc/login_bloc.dart';
+import 'package:your_tasks/bloc/task_bloc/task_bloc.dart';
 import 'package:your_tasks/providers/token-provider.dart';
+import 'package:your_tasks/widgets/snackbars.dart';
 
 class SignIn extends StatefulWidget {
   @override
@@ -16,24 +18,17 @@ class _SignInState extends State<SignIn> {
     return BlocListener<LoginBloc, LoginState>(
         listener: (context, state) {
           if (state is InvalidLogin) {
-            final snackBar = SnackBar(content: Text('Usuario o contraseña incorrectos'));
-
             Scaffold.of(context).hideCurrentSnackBar();
-            Scaffold.of(context).showSnackBar(snackBar);
+            Scaffold.of(context).showSnackBar(SnackBars.errorLogin);
           }
           if (state is LogginIn) {
-            final snackBar = SnackBar(
-                content: Row(
-              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-              children: [CircularProgressIndicator(), Text('Iniciando sesión...')],
-            ));
-
             Scaffold.of(context).hideCurrentSnackBar();
-            Scaffold.of(context).showSnackBar(snackBar);
+            Scaffold.of(context).showSnackBar(SnackBars.loginIn);
           }
           if (state is Logged) {
-            TokenProvicer.saveToken(state.token);
+            TokenProvider.saveToken(state.token);
             Scaffold.of(context).hideCurrentSnackBar();
+            context.bloc<TaskBloc>().add(FetchTask(state.username));
             Navigator.pushNamed(context, '/home');
           }
           ;

@@ -1,3 +1,5 @@
+import 'dart:convert';
+
 class Task {
   int id;
   String name;
@@ -7,7 +9,16 @@ class Task {
   String from;
   String description;
   bool isDone;
-  Task({this.name, this.priority, this.to, this.from});
+
+  Task({
+    this.id,
+    this.name,
+    this.priority,
+    this.to,
+    this.from,
+    this.description,
+    this.isDone,
+  });
 
   Task.fromJson(Map<dynamic, dynamic> json) {
     this.id = json['id'];
@@ -27,5 +38,40 @@ class Task {
     };
 
     return comparations[task.priority];
+  }
+
+  Map<String, dynamic> toMap() {
+    final taskMap =  {
+      'name': name,
+      'priority': priority,
+      'to': to,
+      'from': from,
+      'description': description,
+    };
+
+    if(id != null) taskMap['id'] = id.toString();
+    
+    return taskMap;
+  }
+
+  static Task fromMap(Map<String, dynamic> map) {
+    if (map == null) return null;
+  
+    return Task(
+      id: map['id'],
+      name: map['name'],
+      priority: map['priority'],
+      to: map['to'],
+      from: map['from'],
+      description: map['description'],
+      isDone: map['isDone'],
+    );
+  }
+
+  String toJson() => json.encode(toMap());
+
+  @override
+  String toString() {
+    return 'Task(id: $id, name: $name, priority: $priority, to: $to, from: $from, description: $description, isDone: $isDone)';
   }
 }

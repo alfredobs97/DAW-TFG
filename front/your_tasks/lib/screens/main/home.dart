@@ -9,7 +9,7 @@ class HomeTask extends StatefulWidget {
 
 class _HomeTaskState extends State<HomeTask> {
   int index = 0;
-  List<Widget> screens = [ListTask(), NewTask()];
+  final List<Widget> screens = [ListTask(), NewTask()];
 
   @override
   Widget build(BuildContext context) {
@@ -24,13 +24,14 @@ class _HomeTaskState extends State<HomeTask> {
         title: Text('Prueba'),
         centerTitle: true,
       ),
-      body: screens[index],
+      body: IndexedStack(
+        children: screens,
+        index: index,
+      ),
       bottomNavigationBar: BottomNavigationBar(
         items: [
-          BottomNavigationBarItem(
-              icon: Icon(Icons.home), title: Text('Tareas')),
-          BottomNavigationBarItem(
-              icon: Icon(Icons.edit), title: Text('Asignar'))
+          BottomNavigationBarItem(icon: Icon(Icons.home), title: Text('Tareas')),
+          BottomNavigationBarItem(icon: Icon(Icons.edit), title: Text('Asignar'))
         ],
         currentIndex: index,
         onTap: (int indexNow) {
@@ -48,7 +49,10 @@ class _HomeTaskState extends State<HomeTask> {
         title: Text('Prueba'),
         centerTitle: true,
       ),
-      body: screens[index],
+      body: IndexedStack(
+        children: screens,
+        index: index,
+      ),
       //drawerScrimColor: Colors.redAccent,
       //drawerDragStartBehavior: DragStartBehavior.start,
       drawer: Drawer(
@@ -78,8 +82,8 @@ class _HomeTaskState extends State<HomeTask> {
               title: Text('Salir'),
               onTap: () {
                 // sale del draw y de la parte del login
-               Navigator.pop(context);
-               Navigator.pop(context);
+                Navigator.pop(context);
+                Navigator.pop(context);
               },
             )
           ],
