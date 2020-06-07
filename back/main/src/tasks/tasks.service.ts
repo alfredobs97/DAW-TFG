@@ -46,7 +46,7 @@ export class TasksService {
       username: dtoTaskAssign.from,
     });
 
-    const task = Object.assign(new Task(), dtoTask) as Task;
+    const task = Object.assign(new Task(), dtoTaskAssign) as Task;
 
     task.to = toUser;
     task.from = fromUser;
