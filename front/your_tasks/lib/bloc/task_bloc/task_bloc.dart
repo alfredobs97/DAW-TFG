@@ -36,6 +36,7 @@ class TaskBloc extends Bloc<TaskEvent, TaskState> {
 
   Stream<TaskState> _mapDoneTaskState(String id) async* {
     _taskRepository.isDone(id);
+    yield TaskIsDone();
   }
 
   Stream<TaskState> _mapCreateTaskState(Task task) async* {

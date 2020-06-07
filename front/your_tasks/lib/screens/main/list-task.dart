@@ -6,15 +6,19 @@ import 'package:your_tasks/models/task-model.dart';
 import 'package:your_tasks/screens/main/card.dart';
 
 class ListTask extends StatelessWidget {
+  Future<void> _refreshList(BuildContext context) async {
+    final username = (context.bloc<LoginBloc>().state as Logged).username;
+    context.bloc<TaskBloc>().add(FetchTask(username));
+    await Future.delayed(Duration(seconds: 1));
+  }
+
   @override
   Widget build(BuildContext context) {
-    return BlocConsumer<TaskBloc, TaskState>(
-      listener: (context, state) {
-      if (state is TaskCreated || state is TaskModified) {
-        final username = (context.bloc<LoginBloc>().state as Logged).username;
-        context.bloc<TaskBloc>().add(FetchTask(username));
+    return BlocConsumer<TaskBloc, TaskState>(listener: (_, state) {
+      if (state is TaskCreated || state is TaskModified || state is TaskIsDone) {
+        _refreshList(context);
       }
-    }, builder: (context, state) {
+    }, builder: (_, state) {
       if (state is FetchingTask) {
         return Center(child: CircularProgressIndicator());
       }
@@ -23,8 +27,8 @@ class ListTask extends StatelessWidget {
       }
 
       if (state is FetchTaskLoaded) {
-        return LayoutBuilder(builder: (ctx, constraints) {
-          return constraints.maxWidth > 660 ? _layoutWeb(state.tasks, context) : _layoutMobile(state.tasks);
+        return LayoutBuilder(builder: (_, constraints) {
+          return constraints.maxWidth > 660 ? _layoutWeb(state.tasks, context) : _layoutMobile(state.tasks, context);
         });
       }
 
@@ -32,11 +36,17 @@ class ListTask extends StatelessWidget {
     });
   }
 
-  _layoutMobile(List<Task> tasks) {
-    return ListView.builder(
-      itemCount: tasks.length,
-      itemBuilder: (context, index) => CardTask(task: tasks[index]),
-      padding: EdgeInsets.only(bottom: 50),
+  _layoutMobile(List<Task> tasks, BuildContext context) {
+    return RefreshIndicator(
+      onRefresh: () {
+        return _refreshList(context);
+      },
+      child: ListView.builder(
+        physics: const AlwaysScrollableScrollPhysics(),
+        itemCount: tasks.length,
+        itemBuilder: (context, index) => CardTask(task: tasks[index]),
+        padding: EdgeInsets.only(bottom: 50),
+      ),
     );
   }
 

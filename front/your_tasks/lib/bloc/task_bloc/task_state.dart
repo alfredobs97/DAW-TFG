@@ -26,3 +26,5 @@ class ModifyingTask extends TaskState {}
 class TaskModified extends TaskState {}
 
 class ErrorModifingTask extends TaskState {}
+
+class TaskIsDone extends TaskState {}

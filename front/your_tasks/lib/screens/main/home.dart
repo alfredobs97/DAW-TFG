@@ -21,7 +21,13 @@ class _HomeTaskState extends State<HomeTask> {
   _homeMobile() {
     return Scaffold(
       appBar: AppBar(
-        title: Text('Prueba'),
+        leading: IconButton(
+          icon: Icon(Icons.exit_to_app),
+          onPressed: () {
+            Navigator.pop(context);
+          },
+        ),
+        title: Text('Listado de tareas'),
         centerTitle: true,
       ),
       body: IndexedStack(
@@ -46,7 +52,7 @@ class _HomeTaskState extends State<HomeTask> {
   _homeWeb() {
     return Scaffold(
       appBar: AppBar(
-        title: Text('Prueba'),
+        title: Text('Listado de tareas'),
         centerTitle: true,
       ),
       body: IndexedStack(
