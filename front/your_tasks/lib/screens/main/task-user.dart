@@ -20,7 +20,7 @@ class _AddUserTaskState extends State<AddUserTask> {
           value: _userSelected.any((User user) => users[index].username == user.username),
           onChanged: (bool isSelected) {
             users[index].isSelected = isSelected;
-            if(isSelected) _userSelected.add(users[index]);
+            isSelected ? _userSelected.add(users[index]) : _userSelected.remove(users[index]);
             setState(() {});
           },
         );
