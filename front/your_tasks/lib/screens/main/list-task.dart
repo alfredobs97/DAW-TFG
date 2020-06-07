@@ -3,7 +3,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:your_tasks/bloc/login_bloc/login_bloc.dart';
 import 'package:your_tasks/bloc/task_bloc/task_bloc.dart';
 import 'package:your_tasks/models/task-model.dart';
-import 'package:your_tasks/screens/main/card.dart';
+import 'package:your_tasks/widgets/card.dart';
 
 class ListTask extends StatelessWidget {
   Future<void> _refreshList(BuildContext context) async {
